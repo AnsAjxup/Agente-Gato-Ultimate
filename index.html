@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="./style.css">
+        <link rel="shortcut icon" href="favicon.ico" />
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Agente Gato Ultimate</h1>
+    </header>
+    
+    <main>
+    
+        <div class="relative">
+            <canvas id="myCanvas" width="800" height="850">
+                Your browser does not support the canvas element.
+            </canvas>
+    
+            <div class="absolute" id="startMenu">
+                <p class="centeredbig">Ultimate Tic-Tac-Toe</p>
+                <p class="centered" onclick="pickTurns()"><button>1 Player</button></p>
+                <p class="centered" onclick="startGame(1)"><button>2 Players</button></p>
+            </div>
+            <div class="absolute" id="turnMenu" hidden="hidden">
+                <p class="centeredbig">Ultimate Tic-Tac-Toe</p>
+                <p class="centered" onclick="setGame(0)"><button>Player 1st</button></p>
+                <p class="centered" onclick="setGame(1)"><button>AI 1st</button></p>
+            </div>
+            <div class="absolute" id="winMenu" hidden="hidden">
+                <p class="centeredbig" id="result">Player 1 Wins!</p>
+                <p class="centered" onclick="menu()"><button>Play again</button></p>
+            </div>
+            <div class="absolute fade" id="loader" hidden>
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="./index.js"></script>
+    
+</body>
+</html>
