@@ -1,12 +1,12 @@
 var versionCode = "Alpha 0.9";
-//CANVAS WIDTH AND HEIGHT
-var WIDTH = 800;
-var HEIGHT = 850;
+//alto y ancho del canvas
+var WIDTH = 600;
+var HEIGHT = 650;
 
-var COLORS = {white: "rgb(254, 250, 236)", black: "rgb(7, 5, 14)", blue: "rgb(36, 32, 95)", red: "rgb(129, 43, 56)"};
+var COLORS = {blueLite: "rgb(173, 202, 255)", black: "rgb(7, 5, 14)", blue: "rgb(36, 32, 95)", red: "rgb(129, 43, 56)"};
 
 //BOARDS IS AN ARRAY OF ARRAYS, WHERE EACH OF THE 9 ARRAYS REPRESENTS A LOCAL BOARD
-var boards = [
+var tablas = [
 
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -49,9 +49,10 @@ var AIACTIVE = true;
 
 var playerNames = ["PLAYER", "AI"];
 
-// ---------------------------------------------------------- FUNCTIONS ------------------------------------------------------------------------ //
+// FUNCIONES
 
-//SIMPLY CHECKS A NORMAL TIC TAC TOE BOARD, RETURNS 1 or -1 if a specific player has won, returns 0 if no one has won.
+// comprueba el tablero y devuelve 1 o -1 si un jugador específico ha ganado
+//devuelve 0 si nadie ha ganado
 function checkWinCondition(map) {
     var a = 1;
     if (map[0] + map[1] + map[2] === a * 3 || map[3] + map[4] + map[5] === a * 3 || map[6] + map[7] + map[8] === a * 3 || map[0] + map[3] + map[6] === a * 3 || map[1] + map[4] + map[7] === a * 3 ||
@@ -66,7 +67,7 @@ function checkWinCondition(map) {
     return 0;
 }
 
-//The most important function, returns a numerical evaluation of the whole game in it's current state
+//esta funcion evalua el estado actual del juego
 function evaluateGame(position, currentBoard) {
     var evale = 0;
     var mainBd = [];
@@ -85,7 +86,7 @@ function evaluateGame(position, currentBoard) {
     return evale;
 }
 
-//minimax algorithm
+//algoritmo minimax
 function miniMax(position, boardToPlayOn, depth, alpha, beta, maximizingPlayer) {
     RUNS++;
 
@@ -95,11 +96,11 @@ function miniMax(position, boardToPlayOn, depth, alpha, beta, maximizingPlayer) 
     if(depth <= 0 || Math.abs(calcEval) > 5000) {
         return {"mE": calcEval, "tP": tmpPlay};
     }
-    //If the board to play on is -1, it means you can play on any board
+    //Si el tablero para jugar es -1, significa que puedes jugar en cualquier tablero.
     if(boardToPlayOn !== -1 && checkWinCondition(position[boardToPlayOn]) !== 0){
         boardToPlayOn = -1;
     }
-    //If a board is full (doesn't include 0), it also sets the board to play on to -1
+    //Si un tablero está lleno (no incluye 0), también configura el tablero para jugar en -1
     if(boardToPlayOn !== -1 && !position[boardToPlayOn].includes(0)){
         boardToPlayOn = -1;
     }
@@ -108,10 +109,10 @@ function miniMax(position, boardToPlayOn, depth, alpha, beta, maximizingPlayer) 
         var maxEval = -Infinity;
         for(var mm = 0; mm < 9; mm++){
             var evalut = -Infinity;
-            //If you can play on any board, you have to go through all of them
+            //puedes jugar en cualquier tablero, tienes que pasar por todos
             if(boardToPlayOn === -1){
                 for(var trr = 0; trr < 9; trr++){
-                    //Except the ones which are won
+                    //Excepto los que se ganan
                     if(checkWinCondition(position[mm]) === 0){
                         if(position[mm][trr] === 0){
                             position[mm][trr] = ai;
@@ -131,18 +132,17 @@ function miniMax(position, boardToPlayOn, depth, alpha, beta, maximizingPlayer) 
                 if(beta <= alpha){
                     break;
                 }
-            //If there's a specific board to play on, you just go through it's squares
+            //Si hay un tablero específico para jugar, solo pasa por sus cuadrados
             }else{
                 if(position[boardToPlayOn][mm] === 0){
                     position[boardToPlayOn][mm] = ai;
                     evalut = miniMax(position, mm, depth-1, alpha, beta, false);
                     position[boardToPlayOn][mm] = 0;
                 }
-                //Beautiful variable naming
                 var blop = evalut.mE;
                 if(blop > maxEval){
                     maxEval = blop;
-                    //Saves which board you should play on, so that this can be passed on when the AI is allowed to play in any board
+                    //Guarda en qué tablero deberías jugar, para que esto pueda transmitirse cuando la IA pueda jugar en cualquier tablero
                     tmpPlay = evalut.tP;
                 }
                 alpha = Math.max(alpha, blop);
@@ -153,7 +153,7 @@ function miniMax(position, boardToPlayOn, depth, alpha, beta, maximizingPlayer) 
         }
         return {"mE": maxEval, "tP": tmpPlay};
     }else{
-        //Same for the minimizing end
+        //se realiza lo mismo para el extremo minimizador
         var minEval = Infinity;
         for(var mm = 0; mm < 9; mm++){
             var evalua = Infinity;
@@ -250,32 +250,33 @@ function oneBoardMinMax(position, depth, alpha, beta, maximizingPlayer) {
     }
 }
 
-//Low number means losing the board, big number means winning
-//Tbf this is less an evaluation algorithm and more something that figures out where the AI shud move to win normal Tic Tac Toe
+//Número bajo significa perder el tablero, número grande significa ganar
+//Tbf, esto es menos un algoritmo de evaluación y más algo que descubre dónde
+//debe moverse la IA para ganar Tic Tac Toe normalTbf this is less an evaluation
+//algorithm and more something that figures out where the AI shud move to win normal Tic Tac Toe
 function evaluatePos(pos, square){
     pos[square] = ai;
     var evaluation = 0;
-    //Prefer center over corners over edges
-    //evaluation -= (pos[0]*0.2+pos[1]*0.1+pos[2]*0.2+pos[3]*0.1+pos[4]*0.25+pos[5]*0.1+pos[6]*0.2+pos[7]*0.1+pos[8]*0.2);
+    //Prefiere el centro sobre las esquinas sobre los bordes
+    //erealiza la evaluacion -= (pos[0]*0.2+pos[1]*0.1+pos[2]*0.2+pos[3]*0.1+pos[4]*0.25+pos[5]*0.1+pos[6]*0.2+pos[7]*0.1+pos[8]*0.2);
     var points = [0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2];
 
     var a = 2;
     evaluation+=points[square];
     //console.log("Eyy");
-    //Prefer creating pairs
     a = -2;
     if(pos[0] + pos[1] + pos[2] === a || pos[3] + pos[4] + pos[5] === a || pos[6] + pos[7] + pos[8] === a || pos[0] + pos[3] + pos[6] === a || pos[1] + pos[4] + pos[7] === a ||
         pos[2] + pos[5] + pos[8] === a || pos[0] + pos[4] + pos[8] === a || pos[2] + pos[4] + pos[6] === a) {
         evaluation += 1;
     }
-    //Take victories
+    //victorias
     a = -3;
     if(pos[0] + pos[1] + pos[2] === a || pos[3] + pos[4] + pos[5] === a || pos[6] + pos[7] + pos[8] === a || pos[0] + pos[3] + pos[6] === a || pos[1] + pos[4] + pos[7] === a ||
         pos[2] + pos[5] + pos[8] === a || pos[0] + pos[4] + pos[8] === a || pos[2] + pos[4] + pos[6] === a) {
         evaluation += 5;
     }
 
-    //Block a players turn if necessary
+    //Bloquear el turno de un jugador si es necesario
     pos[square] = player;
 
     a = 3;
@@ -290,12 +291,10 @@ function evaluatePos(pos, square){
 
     pos[square] = 0;
 
-    //evaluation -= checkWinCondition(pos)*4;
-
     return evaluation;
 }
 
-//This function actually evaluates a board fairly, is talked about in video.
+//Esta función evalúa una tabla de manera justa
 function realEvaluateSquare(pos){
     var evaluation = 0;
     var points = [0.2, 0.17, 0.2, 0.17, 0.22, 0.17, 0.2, 0.17, 0.2];
@@ -390,7 +389,7 @@ function pickBoard(pos, pl){
     return remembered;
 }
 
-//Just a quick function to return the sign of a number
+//función para devolver el signo de un número.
 function sign(x){
     if(x > 0){
         return 1;
@@ -401,20 +400,20 @@ function sign(x){
     }
 }
 
-// ---------------------------------------------------------- GAME FUNCTION ------------------------------------------------------------------------ //
+// FUNCION DE JUEGO
 
 var bestMove = -1;
 var bestScore = [-Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity];
 
 function game(){
-    //BG FILL
-    ctx.fillStyle = COLORS.white;
+    //BG llenar
+    ctx.fillStyle = COLORS.blueLite;
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     ctx.lineWidth = 3;
     var squareSize = WIDTH/4;
 
-    //AI HANDLER
+    //manejo de IA
 
     if(currentTurn === -1 && gameRunning && AIACTIVE){
 
@@ -424,72 +423,72 @@ function game(){
         bestMove = -1;
         bestScore = [-Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity, -Infinity];
 
-        RUNS = 0; //Just a variable where I store how many times minimax has run
+        RUNS = 0; //almacena la cantidad de ejecuciones de minimax
 
-        //Calculates the remaining amount of empty squares
+        //calcula la cantidad restante de cuadrados vacíos
         var count = 0;
-        for(var bt = 0; bt < boards.length; bt++){
-            if(checkWinCondition(boards[bt]) === 0){
-                boards[bt].forEach((v) => (v === 0 && count++));
+        for(var bt = 0; bt < tablas.length; bt++){
+            if(checkWinCondition(tablas[bt]) === 0){
+                tablas[bt].forEach((v) => (v === 0 && count++));
             }
         }
 
 
-        if(currentBoard === -1 || checkWinCondition(boards[currentBoard]) !== 0){
+        if(currentBoard === -1 || checkWinCondition(tablas[currentBoard]) !== 0){
             var savedMm;
 
             console.log("Remaining: " + count);
 
-            //This minimax doesn't actually play a move, it simply figures out which board you should play on
+            //minimax determina en qué tablero debes jugar
             if(MOVES < 10) {
-                savedMm = miniMax(boards, -1, Math.min(4, count), -Infinity, Infinity, true); //Putting math.min makes sure that minimax doesn't run when the board is full
+                savedMm = miniMax(tablas, -1, Math.min(4, count), -Infinity, Infinity, true); //math.min asegura que minimax no se ejecute cuando el tablero esté lleno
             }else if(MOVES < 18){
-                savedMm = miniMax(boards, -1, Math.min(5, count), -Infinity, Infinity, true);
+                savedMm = miniMax(tablas, -1, Math.min(5, count), -Infinity, Infinity, true);
             }else{
-                savedMm = miniMax(boards, -1, Math.min(6, count), -Infinity, Infinity, true);
+                savedMm = miniMax(tablas, -1, Math.min(6, count), -Infinity, Infinity, true);
             }
             console.log(savedMm.tP);
             currentBoard = savedMm.tP;
         }
 
-        //Just makes a quick default move for if all else fails
+        //hace un movimiento predeterminado rápido por si todo lo demás falla
         for (var i = 0; i < 9; i++) {
-            if (boards[currentBoard][i] === 0) {
+            if (tablas[currentBoard][i] === 0) {
                 bestMove = i;
                 break;
             }
         }
 
 
-        if(bestMove !== -1) { //This condition should only be false if the board is full, but it's here in case
+        if(bestMove !== -1) { //Esta condición solo debería ser falsa si el tablero está lleno
 
-            //Best score is an array which contains individual scores for each square, here we're just changing them based on how good the move is on that one local board
+            //El mejor puntaje es una matriz que contiene puntajes individuales para cada cuadrado, aquí solo los
+            //estamos cambiando en función de qué tan bueno es el movimiento en ese tablero local
             for (var a = 0; a < 9; a++) {
-                if (boards[currentBoard][a] === 0) {
-                    var score = evaluatePos(boards[currentBoard], a, currentTurn)*45;
+                if (tablas[currentBoard][a] === 0) {
+                    var score = evaluatePos(tablas[currentBoard], a, currentTurn)*45;
                     bestScore[a] = score;
                 }
             }
 
-            //And here we actually run minimax and add those values to the array
+            //ejecutamos minimax y agregamos esos valores a la matriz
             for(var b = 0; b < 9; b++){
-                if(checkWinCondition(boards[currentBoard]) === 0){
-                    if (boards[currentBoard][b] === 0) {
-                        boards[currentBoard][b] = ai;
+                if(checkWinCondition(tablas[currentBoard]) === 0){
+                    if (tablas[currentBoard][b] === 0) {
+                        tablas[currentBoard][b] = ai;
                         var savedMm;
-                        //Notice the stacking, at the beginning of the game, the depth is much lower than at the end
                         if(MOVES < 20){
-                            savedMm = miniMax(boards, b, Math.min(5, count), -Infinity, Infinity, false);
+                            savedMm = miniMax(tablas, b, Math.min(5, count), -Infinity, Infinity, false);
                         }else if(MOVES < 32){
                             console.log("DEEP SEARCH");
-                            savedMm = miniMax(boards, b, Math.min(6, count), -Infinity, Infinity, false);
+                            savedMm = miniMax(tablas, b, Math.min(6, count), -Infinity, Infinity, false);
                         }else{
                             console.log("ULTRA DEEP SEARCH");
-                            savedMm = miniMax(boards, b, Math.min(7, count), -Infinity, Infinity, false);
+                            savedMm = miniMax(tablas, b, Math.min(7, count), -Infinity, Infinity, false);
                         }
                         console.log(savedMm);
                         var score2 = savedMm.mE;
-                        boards[currentBoard][b] = 0;
+                        tablas[currentBoard][b] = 0;
                         bestScore[b] += score2;
                         //boardSel[b] = savedMm.tP;
                         //console.log(score2);
@@ -499,20 +498,20 @@ function game(){
 
             console.log(bestScore);
 
-            //Choses to play on the square with the highest evaluation in the bestScore array
+            //Elige jugar en el cuadrado con la evaluación más alta en la matriz bestScore
             for(var i in bestScore){
                 if(bestScore[i] > bestScore[bestMove]){
                     bestMove = i;
                 }
             }
 
-            //Actually places the cross/nought
-            if(boards[currentBoard][bestMove] === 0){
-                boards[currentBoard][bestMove] = ai;
+            //coloca la cruz/cero
+            if(tablas[currentBoard][bestMove] === 0){
+                tablas[currentBoard][bestMove] = ai;
                 currentBoard = bestMove;
             }
 
-            console.log(evaluateGame(boards, currentBoard));
+            console.log(evaluateGame(tablas, currentBoard));
         }
 
         //document.getElementById("loader").setAttribute('hidden', 'hidden');
@@ -523,15 +522,15 @@ function game(){
 
     shapeSize = squareSize/6;
 
-    //mouseClickHandler
+    //controlador del click del maus
     if(clicked === true && gameRunning) {
-        for (var i in boards) {
+        for (var i in tablas) {
             if(currentBoard !== -1){i = currentBoard;if(mainBoard[currentBoard] !== 0){continue;}}
-            for (var j in boards[i]) {
-                if(boards[i][j] === 0) {
+            for (var j in tablas[i]) {
+                if(tablas[i][j] === 0) {
                     if (mousePosX > (WIDTH / 3 - squareSize) / 2 + squareSize / 6 - shapeSize + (j % 3) * squareSize / 3 + (i % 3) * WIDTH / 3 && mousePosX < (WIDTH / 3 - squareSize) / 2 + squareSize / 6 + shapeSize + (j % 3) * squareSize / 3 + (i % 3) * WIDTH / 3) {
                         if (mousePosY > (WIDTH / 3 - squareSize) / 2 + squareSize / 6 - shapeSize + Math.floor(j / 3) * squareSize / 3 + Math.floor(i / 3) * WIDTH / 3 && mousePosY < (WIDTH / 3 - squareSize) / 2 + squareSize / 6 + shapeSize + Math.floor(j / 3) * squareSize / 3 + Math.floor(i / 3) * WIDTH / 3) {
-                            boards[i][j] = currentTurn;
+                            tablas[i][j] = currentTurn;
                             currentBoard = j;
                             currentTurn = -currentTurn;
                             MOVES++;
@@ -543,7 +542,7 @@ function game(){
         }
     }
 
-    //DRAW BOARDS
+    //dibujar tableros
 
     squareSize = WIDTH/4;
     var shapeSize = WIDTH/36;
@@ -595,17 +594,17 @@ function game(){
         }
     }
 
-    //Draws the SMALL noughts and crosses
+    //dibujar los X/O
     ctx.lineWidth = 5;
 
-    for(var i in boards){
+    for(var i in tablas){
         if(mainBoard[i] === 0) {
-            if (checkWinCondition(boards[i]) !== 0) {
-                mainBoard[i] = checkWinCondition(boards[i]);
+            if (checkWinCondition(tablas[i]) !== 0) {
+                mainBoard[i] = checkWinCondition(tablas[i]);
             }
         }
-        for(var j in boards[i]){
-            if(boards[i][j] === 1*switchAroo){
+        for(var j in tablas[i]){
+            if(tablas[i][j] === 1*switchAroo){
                 ctx.strokeStyle = COLORS.red;
                 ctx.beginPath();
                 ctx.moveTo((WIDTH/3-squareSize)/2 + squareSize/6 - shapeSize + (j%3)*squareSize/3 + (i%3)*WIDTH/3, (WIDTH/3 - squareSize)/2 + squareSize/6 - shapeSize + Math.floor(j/3)*squareSize/3 + Math.floor(i/3)*WIDTH/3);
@@ -616,7 +615,7 @@ function game(){
                 ctx.moveTo((WIDTH/3-squareSize)/2 + squareSize/6 - shapeSize + (j%3)*squareSize/3 + (i%3)*WIDTH/3, (WIDTH/3 - squareSize)/2 + squareSize/6 + shapeSize + Math.floor(j/3)*squareSize/3 + Math.floor(i/3)*WIDTH/3);
                 ctx.lineTo((WIDTH/3-squareSize)/2 + squareSize/6 + shapeSize + (j%3)*squareSize/3 + (i%3)*WIDTH/3, (WIDTH/3 - squareSize)/2 + squareSize/6 - shapeSize + Math.floor(j/3)*squareSize/3 + Math.floor(i/3)*WIDTH/3);
                 ctx.stroke();
-            }else if(boards[i][j] === -1*switchAroo){
+            }else if(tablas[i][j] === -1*switchAroo){
                 ctx.strokeStyle = COLORS.blue;
                 ctx.beginPath();
                 ctx.ellipse((WIDTH/3-squareSize)/2 + squareSize/6 + (j%3)*squareSize/3 + (i%3)*WIDTH/3, (WIDTH/3 - squareSize)/2 + squareSize/6 + Math.floor(j/3)*squareSize/3 + Math.floor(i/3)*WIDTH/3, shapeSize*1.1, shapeSize*1.1, 0, 0, Math.PI*2);
@@ -625,7 +624,7 @@ function game(){
         }
     }
 
-    //Checks the win conditions
+    //Comprueba las condiciones de victoria
     if(gameRunning){
         if (checkWinCondition(mainBoard) !== 0) {
             gameRunning = false;
@@ -637,11 +636,11 @@ function game(){
             }
         }
 
-        //Once again, count the amount of playable squares, if it's 0, game is a tie
+        //cuente la cantidad de casillas jugables, si es 0, el juego está empatado
         var countw = 0;
-        for(var bt = 0; bt < boards.length; bt++){
-            if(checkWinCondition(boards[bt]) === 0){
-                boards[bt].forEach((v) => (v === 0 && countw++));
+        for(var bt = 0; bt < tablas.length; bt++){
+            if(checkWinCondition(tablas[bt]) === 0){
+                tablas[bt].forEach((v) => (v === 0 && countw++));
             }
         }
 
@@ -655,7 +654,7 @@ function game(){
     shapeSize = squareSize/3;
     ctx.lineWidth = 20;
 
-    //Draws the BIG noughts and crosses
+    //Dibuja los GRANDES ceros y cruces cuando se gana un tablero pequeño
     for(var j in mainBoard){
         if(mainBoard[j] === 1*switchAroo){
             ctx.strokeStyle = COLORS.red;
@@ -676,24 +675,24 @@ function game(){
         }
     }
 
-    if(mainBoard[currentBoard] !== 0 || !boards[currentBoard].includes(0)){currentBoard = -1;}
+    if(mainBoard[currentBoard] !== 0 || !tablas[currentBoard].includes(0)){currentBoard = -1;}
 
-    //HIGHLIGHT BOARD TO PLAY ON
+    //Destacar tablero para jugar
 
     ctx.fillStyle = COLORS.red;
     ctx.globalAlpha = 0.1;
     ctx.fillRect(WIDTH/3*(currentBoard%3), WIDTH/3*Math.floor(currentBoard/3), WIDTH/3, WIDTH/3);
     ctx.globalAlpha = 1;
 
-    //Draw EVAL BAR
+    //dibuja la barra de evalucacion/barra de progreso
 
     ctx.globalAlpha = 0.9;
-    if(evaluateGame(boards, currentBoard)*switchAroo > 0){
+    if(evaluateGame(tablas, currentBoard)*switchAroo > 0){
         ctx.fillStyle = COLORS.blue;
     }else{
         ctx.fillStyle = COLORS.red;
     }
-    ctx.fillRect(WIDTH/2, WIDTH, evaluateGame(boards, currentBoard)*2*switchAroo, HEIGHT/16);
+    ctx.fillRect(WIDTH/2, WIDTH, evaluateGame(tablas, currentBoard)*2*switchAroo, HEIGHT/16);
     ctx.globalAlpha = 1;
 
     ctx.strokeStyle = 'black';
@@ -717,11 +716,11 @@ function game(){
 
 }
 
-// ---------------------------------------------------------- RESET FUNCTION ------------------------------------------------------------------------ //
+// FUNCION DE RESET
 
 var keys;
 
-// ---------------------------------------------------------- KEY LISTENERS ------------------------------------------------------------------------ //
+// KEY LISTENERS
 
 function findScreenCoords(mouseEvent)
 {
@@ -750,7 +749,7 @@ window.addEventListener('keyup', function (e) {
     keys[e.keyCode] = (e.type == "keydown");
 }, false);
 
-// ---------------------------------------------------------- RELOAD FUNCTION ------------------------------------------------------------------------ //
+// FUNCION DE RECARGA
 
 function Reload() {
     localStorage.setItem("HighScoreBusiness", 0);
@@ -758,7 +757,7 @@ function Reload() {
 }
 
 function startGame(type){
-    boards = [
+    tablas = [
 
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -805,21 +804,20 @@ function setGame(type){
     }
     startGame(0);
 }
-
+//FUNCION PARA MOSTRAR EL MENU
 function menu(){
     document.getElementById("startMenu").removeAttribute("hidden");
     document.getElementById("turnMenu").setAttribute("hidden", "hidden");
     document.getElementById("winMenu").setAttribute("hidden", "hidden");
 }
-
+//FUNCION PARA MOSTRAR LOS TURNOS
 function pickTurns(){
     document.getElementById("startMenu").setAttribute("hidden", "hidden");
     document.getElementById("turnMenu").removeAttribute("hidden");
 }
-// ---------------------------------------------------------- GAME LOOP ------------------------------------------------------------------------ //
 
+// BUCLE DEL JUEGO
 function repeatOften() {
-    // Do whatever
     game();
     requestAnimationFrame(repeatOften);
 }

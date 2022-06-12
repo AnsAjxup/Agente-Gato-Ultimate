@@ -6,22 +6,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="./style.css">
         <link rel="shortcut icon" href="favicon.ico" />
-    <title>Document</title>
+    <title>Gato Ultimate</title>
 </head>
 <body>
     <header>
-        <h1>Agente Gato Ultimate</h1>
+        <h1 class="title-header">Agente Gato Ultimate</h1>
     </header>
     
     <main>
-    
+        <div class="description">
+            <h2>Esta es una variante que hace interesante el totito o gato.</h2>
+            <a href="./instructions.html">Instrucciones</a>
+        </div>
         <div class="relative">
-            <canvas id="myCanvas" width="800" height="850">
+            <canvas id="myCanvas" width="600" height="650">
                 Your browser does not support the canvas element.
             </canvas>
     
             <div class="absolute" id="startMenu">
-                <p class="centeredbig">Ultimate Tic-Tac-Toe</p>
+                <p class="centeredbig">Agente Gato Ultimate</p>
                 <p class="centered" onclick="pickTurns()"><button>1 Player</button></p>
                 <p class="centered" onclick="startGame(1)"><button>2 Players</button></p>
             </div>
@@ -39,7 +42,12 @@
             </div>
         </div>
     </main>
-    
+    <footer>
+        <p>UMG</p>
+        <p>Agente Gato Ultimate - Examen final Inteligencia Artificial</p>
+        <p>Estudiante: Andrés Cristosam Ajxup Hernández</p>
+        <p>Carné: 1490-16-16030</p>
+    </footer>
     <script src="./index.js"></script>
     
 </body>
