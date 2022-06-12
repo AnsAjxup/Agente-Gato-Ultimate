@@ -20,22 +20,22 @@
         </div>
         <div class="relative">
             <canvas id="myCanvas" width="600" height="650">
-                Your browser does not support the canvas element.
+                Lo siento, Tu navegador no soporta el elemento de canvas.
             </canvas>
     
             <div class="absolute" id="startMenu">
                 <p class="centeredbig">Agente Gato Ultimate</p>
-                <p class="centered" onclick="pickTurns()"><button>1 Player</button></p>
-                <p class="centered" onclick="startGame(1)"><button>2 Players</button></p>
+                <p class="centered" onclick="elegirTurno()"><button>1 Jugador</button></p>
+                <p class="centered" onclick="empezarJuego(1)"><button>2 Jugadores </button></p>
             </div>
             <div class="absolute" id="turnMenu" hidden="hidden">
-                <p class="centeredbig">Ultimate Tic-Tac-Toe</p>
-                <p class="centered" onclick="setGame(0)"><button>Player 1st</button></p>
-                <p class="centered" onclick="setGame(1)"><button>AI 1st</button></p>
+                <p class="centeredbig">Agente Gato Ultimatee</p>
+                <p class="centered" onclick="establecerJuego(0)"><button>Inicia Jugador</button></p>
+                <p class="centered" onclick="establecerJuego(1)"><button>Inicia IA</button></p>
             </div>
             <div class="absolute" id="winMenu" hidden="hidden">
-                <p class="centeredbig" id="result">Player 1 Wins!</p>
-                <p class="centered" onclick="menu()"><button>Play again</button></p>
+                <p class="centeredbig" id="result">El jugador 1 Gana!!!</p>
+                <p class="centered" onclick="menu()"><button>Jugar de nuevo</button></p>
             </div>
             <div class="absolute fade" id="loader" hidden>
                 <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
